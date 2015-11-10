@@ -49,15 +49,16 @@ class IFrameResizer extends Widget
         $url = $widget->getScriptUrl();
         $scriptTag = Html::jsFile($url);
 
-        // Embed script into existing HTML before closing </body> tag
-        $dom = new DOMDocument();
-        $dom->loadHTML($html);
-        $body = $dom->getElementsByTagName('body')->item(0);
-        $script = $dom->createDocumentFragment();
-        $script->appendXML($scriptTag);
-        $body->appendChild($script);
+        // Using regular expression rather than DOMDocument approach, as the latter may end up messing the code.
+        // Split the string contained in $html in three parts:
+        // - everything before the </body> tag
+        // - the </body> tag with any attributes in it
+        // - everything following the </body> tag
+        $matches = preg_split('/(<\/body.*?>)/i', $html, -1, PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE);
+        // assemble HTML code back with the script code embedded before </body>
+        $embeddedHTML = $matches[0] . $scriptTag . $matches[1] . $matches[2];
 
-        return $dom->saveHTML();
+        return $embeddedHTML;
     }
 
     /**
