@@ -11,7 +11,7 @@ use Yii;
 use yii\base\Widget;
 use yii\base\InvalidConfigException;
 use yii\helpers\Html;
-use DOMDocument;
+use yii\helpers\Url;
 
 /**
  * IFrameResizer provides convenient shortcut methods allowing to embed iframeResizer.contentWindow.min.js file inside iFrames.
@@ -71,6 +71,6 @@ class IFrameResizer extends Widget
         $contentWindowJS = YII_DEBUG ? 'iframeResizer.contentWindow.js' : 'iframeResizer.contentWindow.min.js';
         $assetManager = $this->view->getAssetManager();
         $assetBundle = $assetManager->getBundle(IFrameResizerAsset::className());   // this does the publishing
-        return $assetManager->getAssetUrl($assetBundle, $contentWindowJS);
+        return Url::base(true) . $assetManager->getAssetUrl($assetBundle, $contentWindowJS);
     }
 }
